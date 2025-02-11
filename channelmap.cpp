@@ -10,22 +10,22 @@ std::vector<std::pair<u_int8_t, u_int8_t> > &ChannelMap::map()
     return map_;
 }
 
-unsigned long ChannelMap::numberOfChannelsAlpha()
+unsigned long ChannelMap::numberOfChannelsAlpha() const
 {
     return numberOfChannels(ALPHA);
 }
 
-u_int8_t ChannelMap::numberByChannel(unsigned long ch)
+u_int8_t ChannelMap::numberByChannel(unsigned long ch) const
 {
     return map_.at(ch).second;
 }
 
-u_int8_t ChannelMap::typeByChannel(unsigned long ch)
+u_int8_t ChannelMap::typeByChannel(unsigned long ch) const
 {
     return map_.at(ch).first;
 }
 
-unsigned long ChannelMap::numberOfChannels(EChannelType type)
+unsigned long ChannelMap::numberOfChannels(EChannelType type) const
 {
     unsigned long number{};
     auto it = map_.begin();
