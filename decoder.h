@@ -11,6 +11,7 @@ public:
     std::vector<dec_ev_t> & events();
     std::vector<dec_cnt_t> & counters();
     void process();
+    std::vector<long> positionsOfCMAPHeaders();
 private:
 
     std::string fileName_;

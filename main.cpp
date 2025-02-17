@@ -18,7 +18,8 @@ void spinner() {
 void function(const std::string fileName) {
     ChannelMap pre;
     Decoder decoder(fileName, pre);
-
+    auto pos{decoder.positionsOfCMAPHeaders()};
+    std::cout << pos.size() << std::endl;
 }
 
 int main(int argc, char *argv[])
