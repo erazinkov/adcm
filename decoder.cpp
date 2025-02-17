@@ -6,7 +6,7 @@
 Decoder::Decoder(const std::string &fileName, const ChannelMap &pre)
     : fileName_{fileName} , pre_{pre}
 {
-    process();
+
 }
 
 std::vector<dec_ev_t> &Decoder::events()
@@ -118,6 +118,58 @@ void Decoder::process()
         ifs_.seekg(1 - static_cast<long long>(sizeof(stor_packet_hdr_t)), std::ios_base::cur);
     }
     ifs_.close();
+}
+
+std::vector<long> Decoder::positionsOfCMAPHeaders()
+{
+    std::vector<long> pos{};
+    ifs_.open(fileName_, std::ios::in | std::ios::binary);
+    if (!ifs_.is_open())
+    {
+        std::clog << "Can't open file" << std::endl;
+        return pos;
+    }
+
+    stor_packet_hdr_t hdr;
+    adcm_cmap_t cmap;
+    adcm_counters_t counters;
+
+    auto c{false};
+    long currentPosition{0};
+    while (ifs_)
+    {
+        ifs_ >> hdr;
+        currentPosition += sizeof(stor_packet_hdr_t);
+        if (hdr.id == STOR_ID_CMAP && hdr.size > sizeof(stor_packet_hdr_t))
+        {
+            currentPosition = ifs_.tellg();
+            ifs_ >> cmap;
+            c = pre_.isCorrect(cmap.map);
+            if (c)
+            {
+                currentPosition -= sizeof(stor_packet_hdr_t);
+                pos.push_back(currentPosition);
+            }
+            continue;
+        }
+        if (hdr.id == STOR_ID_EVNT && hdr.size > sizeof(stor_packet_hdr_t))
+        {
+            hdr.size -= sizeof(stor_packet_hdr_t);
+            ifs_.ignore(hdr.size);
+            continue;
+        }
+        if (hdr.id == STOR_ID_CNTR && hdr.size > sizeof(stor_packet_hdr_t))
+        {
+
+            hdr.size -= sizeof(stor_packet_hdr_t);
+            ifs_.ignore(hdr.size);
+            continue;
+        }
+        ifs_.seekg(1 - static_cast<long long>(sizeof(stor_packet_hdr_t)), std::ios_base::cur);
+    }
+    ifs_.close();
+
+    return pos;
 }
 
 
