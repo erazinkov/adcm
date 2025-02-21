@@ -16,19 +16,20 @@ void spinner() {
 }
 
 void function(const std::string fileName) {
-    ChannelMap pre;
+    ChannelMap pre = ChannelMap::mapNAP();
     Decoder decoder(fileName, pre);
     auto pos{decoder.positionsOfCMAPHeaders()};
     std::cout << pos.size() << std::endl;
+    decoder.process();
+    auto e{decoder.events()};
+    std::cout << e.size() << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
 //    QCoreApplication a(argc, argv);
-
-
     auto start = std::chrono::steady_clock::now();
-    function("/home/egor/shares/tmp/proba_t2_thin_1");
+    function("/home/egor/shares/tmp/proba_t2_thin_2");
 //    function("/home/egor/shares/tmp/kp_dynamic_1_tmp");
     auto stop = std::chrono::steady_clock::now();
     std::cout << "Time elapsed, ms: " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << std::endl;
